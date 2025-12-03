@@ -1,7 +1,6 @@
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaClient } from "@prisma/client";
-// Modern ve hatasız şifreleme kütüphanesini kullanıyoruz:
 import { compare } from "bcrypt-ts";
 
 const prisma = new PrismaClient();
@@ -27,11 +26,7 @@ export const authOptions: AuthOptions = {
           throw new Error("Kullanıcı bulunamadı.");
         }
 
-        // bcrypt-ts ile güvenli kontrol
-        const isPasswordValid = await compare(
-          credentials.password,
-          user.password
-        );
+        const isPasswordValid = await compare(credentials.password, user.password);
 
         if (!isPasswordValid) {
           throw new Error("Şifre hatalı.");
@@ -48,6 +43,11 @@ export const authOptions: AuthOptions = {
     }),
   ],
   callbacks: {
+    // İŞTE EKSİK OLAN PARÇA BURASI:
+    async redirect({ url, baseUrl }) {
+      // Eğer kullanıcı giriş yapıyorsa, onu Dashboard'a at
+      return baseUrl + "/dashboard";
+    },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
