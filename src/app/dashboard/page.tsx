@@ -1,41 +1,22 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
+// HATA VEREN SATIR DEĞİŞTİ: Artık lib/auth dosyasından çekiyoruz
+import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    redirect("/api/auth/signin");
+    redirect("/");
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8 font-sans">
-      <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-        <h1 className="text-3xl font-bold text-green-600 mb-2">🎉 Giriş Başarılı!</h1>
-        <p className="text-gray-500 mb-8">Yönetim paneline hoş geldiniz.</p>
-
-        <div className="bg-blue-50 border border-blue-100 rounded-xl p-6 space-y-3">
-          <div className="flex items-center">
-            <span className="font-semibold text-blue-900 w-24">Email:</span>
-            <span className="text-blue-700">{session.user?.email}</span>
-          </div>
-          <div className="flex items-center">
-            <span className="font-semibold text-blue-900 w-24">Rol:</span>
-            <span className="px-3 py-1 bg-blue-200 text-blue-800 rounded-full text-xs font-bold">
-              {session.user?.role || "USER"}
-            </span>
-          </div>
-        </div>
-
-        <div className="mt-8">
-            <a 
-              href="/api/auth/signout" 
-              className="inline-block px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition-colors shadow-md"
-            >
-              Çıkış Yap
-            </a>
-        </div>
+    <div className="p-8">
+      <h1 className="text-2xl font-bold mb-4">Bayi Paneli</h1>
+      <div className="bg-white p-6 rounded-lg shadow">
+        <p className="text-lg">Hoşgeldiniz, <span className="font-bold">{session.user?.email}</span></p>
+        <p className="text-slate-500 mt-2">Rolünüz: {session.user?.role || "Tanımsız"}</p>
+        <p className="mt-4 text-sm text-blue-600">Burada sipariş geçmişi ve özel fiyatlar yer alacak.</p>
       </div>
     </div>
   );
