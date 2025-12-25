@@ -15,7 +15,7 @@ export default function Footer() {
             <Link href="/dashboard">Bayi Paneli</Link>
         </div>
         <div className="mt-8 text-xs text-slate-500">
-          &copy; {new Date().getFullYear()} Servesel Gıda A.Ş.
+          &copy; {new Date().getFullYear()} Servesel Tedarik A.Ş.
         </div>
       </div>
     </footer>

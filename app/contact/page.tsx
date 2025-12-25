@@ -26,7 +26,7 @@ export default function ContactPage() {
     e.preventDefault();
     if (!formData.email || !formData.message) return alert("Lütfen form alanlarını doldurun.");
 
-    const subject = encodeURIComponent(`Servesel Gıda İletişim: ${formData.subject}`);
+    const subject = encodeURIComponent(`Servesel Tedarik İletişim: ${formData.subject}`);
     const body = encodeURIComponent(
       `Gönderen: ${formData.name}\nE-Posta: ${formData.email}\n\nMesaj:\n${formData.message}`
     );
@@ -41,7 +41,7 @@ export default function ContactPage() {
     e.preventDefault();
     if (!formData.email || !formData.message) return alert("Lütfen form alanlarını doldurun.");
 
-    const subject = encodeURIComponent(`Servesel Gıda İletişim: ${formData.subject}`);
+    const subject = encodeURIComponent(`Servesel Tedarik İletişim: ${formData.subject}`);
     const body = encodeURIComponent(
       `Gönderen: ${formData.name}\nE-Posta: ${formData.email}\n\nMesaj:\n${formData.message}`
     );

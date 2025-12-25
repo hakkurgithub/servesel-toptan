@@ -8,7 +8,7 @@ import { CartProvider } from "@/components/CartProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Servesel Gıda - B2B Tedarik Portalı",
+  title: "Servesel Tedarik - B2B Tedarik Portalı",
   description: "İşletmeniz için güvenilir toptan gıda tedarikçisi.",
 };
 
