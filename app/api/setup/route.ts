@@ -7,7 +7,7 @@ export async function GET() {
     let category = await prisma.category.findFirst({ where: { slug: "gida" } });
     if (!category) {
       category = await prisma.category.create({
-        data: { name: "Temel Gıda", slug: "gida" },
+        data: { name: "Temel Tedarik", slug: "gida" },
       });
     }
 

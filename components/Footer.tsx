@@ -7,9 +7,9 @@ export default function Footer() {
       <div className="container mx-auto px-6 text-center">
         <div className="flex justify-center items-center gap-2 mb-4 text-white">
           <Package size={24} />
-          <span className="text-xl font-bold">SERVESEL GIDA</span>
+          <span className="text-xl font-bold">SERVESEL TEDARİK</span>
         </div>
-        <p className="text-sm text-slate-400 mb-4">Güvenilir toptan gıda tedarikçiniz.</p>
+        <p className="text-sm text-slate-400 mb-4">Güvenilir tedarikçiniz.</p>
         <div className="flex justify-center gap-4 text-sm font-bold text-white">
             <Link href="/">Ana Sayfa</Link>
             <Link href="/dashboard">Bayi Paneli</Link>

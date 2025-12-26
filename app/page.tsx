@@ -12,12 +12,12 @@ export default function Home() {
         
         <div className="relative z-20 text-center px-4">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Toptan Gıda Tedariğinde <br /> 
+            Tedarikte <br /> 
             <span className="text-blue-400">Güvenilir Çözüm Ortağınız</span>
           </h1>
           <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl mx-auto">
-            İşletmeniz için en taze ürünler, en uygun fiyatlarla kapınızda. 
-            Restoran, kafe ve marketler için özel B2B hizmeti.
+            İşletmeniz için en iyi ürünler, en uygun fiyatlarla kapınızda. 
+            Restoran, Kafe Marketler ve Şirketleriniz için özel B2B hizmeti.
           </p>
           
           <div className="flex gap-4 justify-center">
