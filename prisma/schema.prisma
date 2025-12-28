@@ -10,7 +10,7 @@ datasource db {
 
 // --- KULLANICI MODELİ ---
 model User {
-  id        String    @id @default(cuid()) // NextAuth uyumu için String yapıldı
+  id        String    @id @default(cuid())
   email     String    @unique
   password  String
   role      Role      @default(BUYER)
@@ -43,6 +43,7 @@ model Category {
 model Product {
   id          String   @id @default(cuid())
   name        String
+  slug        String   @unique  // <-- EKSİK OLAN BU EKLENDİ
   description String?
   price       Float
   image       String?
@@ -66,9 +67,9 @@ model Order {
   userId    String
   user      User        @relation(fields: [userId], references: [id])
   
-  items     OrderItem[] // JSON yerine gerçek tablo ilişkisi
+  items     OrderItem[] // İlişkisel yapı
   total     Float
-  status    String      @default("Hazırlanıyor") // Bekliyor, Hazırlanıyor, Tamamlandı
+  status    String      @default("Hazırlanıyor") 
   createdAt DateTime    @default(now())
 }
 

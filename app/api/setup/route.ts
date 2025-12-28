@@ -3,53 +3,63 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
-    // Kategori kontrolü
-    let category = await prisma.category.findFirst({ where: { slug: "gida" } });
-    if (!category) {
-      category = await prisma.category.create({
-        data: { name: "Temel Tedarik", slug: "gida" },
+    // 1. Veritabanı boş mu kontrol et
+    const count = await prisma.product.count();
+
+    if (count === 0) {
+      
+      // Eklenecek ham veriler (Slug olmadan)
+      const rawProducts = [
+        {
+          name: "Örnek Ürün 1",
+          description: "Sistem tarafından oluşturulan otomatik ürün.",
+          price: 100,
+          stock: 50,
+          category: "Genel",
+          isActive: true,
+          link: "" 
+        },
+        {
+          name: "Örnek Ürün 2",
+          description: "Bu da ikinci örnek ürünümüz.",
+          price: 250,
+          stock: 20,
+          category: "Elektronik",
+          isActive: true,
+          link: ""
+        }
+      ];
+
+      // 2. Her ürüne otomatik Slug ekle
+      const dataWithSlugs = rawProducts.map((product) => {
+        // İstediğin slug oluşturma mantığı:
+        let slug = product.name
+          .toLowerCase()
+          .replace(/\s+/g, '-')             // Boşlukları tire yap
+          .replace(/[^a-z0-9ğüşıöç-]/g, ''); // Özel karakterleri temizle
+        
+        // Benzersiz olması için sonuna zaman damgası ekle (Çakışmayı %100 önler)
+        // Setup dosyası olduğu için veritabanı boş, ama yine de garanti olsun.
+        slug = `${slug}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
+        return {
+          ...product,
+          slug: slug
+        };
       });
+
+      // 3. Toplu Kayıt Yap (createMany)
+      await prisma.product.createMany({
+        data: dataWithSlugs
+      });
+
+      return NextResponse.json({ message: "Kurulum tamamlandı, örnek ürünler eklendi." });
     }
 
-    // Sahte ürünler
-    const products = [
-      { name: "Ayçiçek Yağı 18L", price: 650, stock: 100, image: "https://placehold.co/400?text=Yag" },
-      { name: "Pirinç 25kg", price: 900, stock: 50, image: "https://placehold.co/400?text=Pirinc" },
-      { name: "Toz Şeker 50kg", price: 1200, stock: 200, image: "https://placehold.co/400?text=Seker" },
-    ];
+    return NextResponse.json({ message: "Sistem zaten kurulu." });
 
-    // Admin/Satıcı kontrolü
-    let seller = await prisma.user.findFirst({ where: { role: "ADMIN" } });
-    if (!seller) {
-        seller = await prisma.user.findFirst();
-    }
-
-    if (!seller) {
-        return NextResponse.json({ error: "Önce en az bir kullanıcı kaydı yapmalısınız!" }, { status: 400 });
-    }
-
-    // Ürünleri ekle
-    for (const p of products) {
-      const exists = await prisma.product.findFirst({ where: { name: p.name } });
-      if (!exists) {
-        await prisma.product.create({
-          data: {
-            name: p.name,
-            slug: p.name.toLowerCase().replace(/ /g, "-"),
-            description: "Toptan satış ürünü",
-            price: p.price,
-            stock: p.stock,
-            image: p.image,
-            categoryId: category.id,
-            sellerId: seller.id,
-            public: true
-          }
-        });
-      }
-    }
-
-    return NextResponse.json({ message: "Ürünler başarıyla yüklendi!" });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Setup Hatası:", error);
+    return NextResponse.json({ error: "Kurulum hatası: " + error.message }, { status: 500 });
   }
 }

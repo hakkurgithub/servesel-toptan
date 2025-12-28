@@ -23,13 +23,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Kullanıcı bulunamadı." }, { status: 404 });
     }
 
-    // 3. Siparişi Veritabanına Kaydet
+    // 3. Siparişi Veritabanına Kaydet (YENİ YAPINIZ)
+    // Artık items'ı string olarak değil, ilişkisel tablo verisi olarak ekliyoruz.
     const order = await prisma.order.create({
       data: {
         userId: user.id,
         total: parseFloat(total),
-        status: "Bekleniyor (WP)", // Durumu belirttik
-        items: JSON.stringify(items)
+        status: "Bekleniyor (WP)", 
+        // DÜZELTME BURADA: items tablosuna veri ekliyoruz
+        items: {
+          create: items.map((item: any) => ({
+            productId: item.id, // Ürün ID'si
+            quantity: item.quantity, // Adet
+            price: parseFloat(item.price) // Fiyat
+          }))
+        }
       }
     });
 

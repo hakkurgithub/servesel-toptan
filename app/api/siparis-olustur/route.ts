@@ -1,9 +1,7 @@
-import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma"; // Prisma Client'ı buradan çekiyoruz
 import nodemailer from "nodemailer";
 import twilio from "twilio";
-
-const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
@@ -19,16 +17,27 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Kullanıcı bulunamadı." }, { status: 400 });
     }
 
-    // 2. Veritabanına Kaydet
+    // 2. Veritabanına Kaydet (İLİŞKİSEL YÖNTEM - DÜZELTİLDİ)
+    // Toplam tutarı hesapla
     const total = cart.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0);
     
     const newOrder = await prisma.order.create({
       data: {
         userId: dbUser.id,
-        items: JSON.stringify(cart),
-        total: total,
+        total: parseFloat(total), // Sayı olduğundan emin olalım
         status: "Hazırlanıyor",
+        // HATA ÇÖZÜMÜ BURADA: JSON string yerine tabloya kayıt
+        items: {
+          create: cart.map((item: any) => ({
+             productId: item.id,
+             quantity: item.quantity,
+             price: parseFloat(item.price)
+          }))
+        }
       },
+      include: {
+        items: { include: { product: true } } // Mailde ürün isimlerini görmek için gerekli olabilir
+      }
     });
 
     // --- BİLDİRİM SİSTEMİ ---
@@ -39,7 +48,6 @@ export async function POST(req: Request) {
     📞 Telefon: ${dbUser.phone || "Yok"}
     💰 Tutar: ${total} TL
     `;
-    // Yukarıdaki satırda "dbUser.name" yerine "dbUser.company" yapıldı.
 
     // A) Email Gönder
     if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {

@@ -8,7 +8,7 @@ export async function GET() {
   try {
     const products = await prisma.product.findMany({
       orderBy: {
-        createdAt: 'desc', // DİKKAT: Yeni eklenenler en üstte görünür
+        createdAt: 'desc',
       },
     });
     return NextResponse.json(products);
@@ -37,7 +37,7 @@ export async function POST(req: Request) {
     let product;
 
     if (id) {
-      // ID varsa GÜNCELLE
+      // ID varsa GÜNCELLE (Slug değiştirmiyoruz, linklerin bozulmaması için)
       product = await prisma.product.update({
         where: { id },
         data: {
@@ -47,15 +47,30 @@ export async function POST(req: Request) {
           stock: intStock,
           image,
           category: category || "Genel",
-          link: link || "", // Yeni link alanı
-          isActive: isActive // Yeni aktiflik durumu
+          link: link || "",
+          isActive: isActive
         },
       });
     } else {
       // ID yoksa YENİ EKLE
+      
+      // 1. Slug Oluştur
+      let slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9ğüşıöç-]/g, '');
+      
+      // 2. Slug Çakışması Kontrolü
+      const existingSlug = await prisma.product.findUnique({
+        where: { slug }
+      });
+
+      // 3. Eğer bu slug varsa sonuna zaman damgası ekle
+      if (existingSlug) {
+        slug = `${slug}-${Date.now()}`;
+      }
+
       product = await prisma.product.create({
         data: {
           name,
+          slug, // <-- EKLENEN KISIM
           description,
           price: floatPrice,
           stock: intStock,
