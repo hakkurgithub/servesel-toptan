@@ -63,14 +63,14 @@ model Product {
 
 // --- SİPARİŞ MODELİ ---
 model Order {
-  id        String      @id @default(cuid())
-  userId    String
-  user      User        @relation(fields: [userId], references: [id])
-  
-  items     OrderItem[] // İlişkisel yapı
-  total     Float
-  status    String      @default("Hazırlanıyor") 
-  createdAt DateTime    @default(now())
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+  items         OrderItem[]
+  total         Float
+  status        String      @default("Hazırlanıyor") 
+  paymentMethod String      @default("Havale/EFT")  // <-- BU SATIRI EKLE
+  createdAt     DateTime    @default(now())
 }
 
 // --- SİPARİŞ DETAYI (ARA TABLO) ---
